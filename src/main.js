@@ -14,8 +14,8 @@ setupGuard(router)
 setupI18n()
 
 new Vue({
-	router,
-	pinia: store,
-	i18n,
-	render: h => h(App)
+  router,
+  pinia: store,
+  i18n,
+  render: (h) => h(App)
 }).$mount('#app')
