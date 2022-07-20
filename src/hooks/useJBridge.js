@@ -3,9 +3,13 @@ export default function useJBridge() {
     if (window.WebViewJavascriptBridge) {
       return callback(window.WebViewJavascriptBridge)
     } else {
-      document.addEventListener('WebViewJavascriptBridgeReady', function (event) {
-        callback(window.WebViewJavascriptBridge)
-      }, false)
+      document.addEventListener(
+        'WebViewJavascriptBridgeReady',
+        function (event) {
+          callback(window.WebViewJavascriptBridge)
+        },
+        false
+      )
     }
     if (window.WVJBCallbacks) {
       return window.WVJBCallbacks.push(callback)
