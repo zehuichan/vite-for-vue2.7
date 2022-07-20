@@ -13,6 +13,8 @@ registerComponents()
 setupGuard(router)
 setupI18n()
 
+Vue.config.productionTip = false
+
 new Vue({
   router,
   pinia: store,
