@@ -11,7 +11,7 @@ import enLocale from './en'
 import zhLocale from './zh'
 
 // utils
-import cache from '@/utils/cache'
+import { Cache } from '@/utils/cache'
 
 Vue.use(VueI18n)
 
@@ -26,7 +26,7 @@ const options = {
 }
 
 export function getLanguage() {
-  const chooseLanguage = cache.getItem('language')
+  const chooseLanguage = Cache.getItem('language')
   if (chooseLanguage) return chooseLanguage
 
   // if has not choose language

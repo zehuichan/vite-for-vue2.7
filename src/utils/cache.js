@@ -1,45 +1,43 @@
-const prefix = import.meta.env.VITE_WECHAT_APPID
+// token key
+export const TOKEN_KEY = 'TOKEN__'
+// user info key
+export const USER_INFO_KEY = 'USER__INFO__'
 
-class Cache {
-  setItem(key, value) {
-    try {
-      localStorage.setItem(prefix + key, JSON.stringify(value))
-    } catch (e) {
-      console.log(e)
+// 默认缓存期限为7天
+const DEFAULT_CACHE_TIME = 60 * 60 * 24 * 7
+
+export class Cache {
+  static setItem(key, value, expire = DEFAULT_CACHE_TIME) {
+    const stringData = JSON.stringify({
+      value,
+      expire: expire !== null ? new Date().getTime() + expire * 1000 : null
+    })
+    localStorage.setItem(key, stringData)
+  }
+
+  static getItem(key, def = null) {
+    const item = localStorage.getItem(key)
+    if (item) {
+      try {
+        const data = JSON.parse(item)
+        const { value, expire } = data
+        // 在有效期内直接返回
+        if (expire === null || expire >= Date.now()) {
+          return value
+        }
+        this.removeItem(key)
+      } catch (e) {
+        return def
+      }
     }
+    return def
   }
 
-  getItem(key) {
-    try {
-      return JSON.parse(localStorage.getItem(prefix + key))
-    } catch (e) {
-      return ''
-    }
+  static removeItem(key) {
+    localStorage.removeItem(key)
   }
 
-  removeItem(key) {
-    return localStorage.removeItem(prefix + key)
-  }
-
-  setSession(key, value) {
-    try {
-      sessionStorage.setItem(prefix + key, JSON.stringify(value))
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  getSession(key) {
-    try {
-      return JSON.parse(sessionStorage.getItem(prefix + key))
-    } catch (e) {
-      return ''
-    }
-  }
-
-  removeSession(key) {
-    return sessionStorage.removeItem(prefix + key)
+  static clear() {
+    localStorage.clear()
   }
 }
-
-export default new Cache()

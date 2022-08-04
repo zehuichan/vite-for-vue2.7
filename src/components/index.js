@@ -1,13 +1,11 @@
-import Vue from 'vue'
-
 const components = []
 
-export function registerComponents() {
+export function registerComponents(app) {
   components.map((item) => {
     if (item.install) {
-      Vue.use(item)
+      app.use(item)
     } else if (item.name) {
-      Vue.component(item.name, item)
+      app.component(item.name, item)
     }
   })
 }
