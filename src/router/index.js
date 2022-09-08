@@ -1,4 +1,4 @@
-import Vue, { getCurrentInstance, shallowRef } from 'vue'
+import Vue, { effectScope, getCurrentInstance, reactive } from 'vue'
 import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
@@ -10,31 +10,25 @@ export const router = new VueRouter({
 
 export function useRouter() {
   const vm = getCurrentInstance()
-
-  if (vm) {
-    return router
-  }
-
-  console.warn('请在 setup 中调用。')
-
-  return undefined
+  if (!vm) throw new Error('must be called in setup')
+  return vm.proxy.$router
 }
 
+let currentRoute
+
 export function useRoute() {
-  const currentRoute = shallowRef()
-  if (!currentRoute.value) {
-    const vm = getCurrentInstance()
+  const vm = getCurrentInstance()
+  if (!vm) throw new Error('must be called in setup')
 
-    if (!vm) {
-      console.warn('请在 setup 中调用。')
-      return
-    }
-
-    currentRoute.value = vm.proxy.$route
-
-    // 每次路由切换时，更新 route 参数
-    const router = useRouter()
-    router.afterEach((to) => (currentRoute.value = to))
+  if (!currentRoute) {
+    const scope = effectScope(true)
+    scope.run(() => {
+      const { $router } = vm.proxy
+      currentRoute = reactive(Object.assign({}, $router.currentRoute))
+      $router.afterEach((to) => {
+        Object.assign(currentRoute, to)
+      })
+    })
   }
 
   return currentRoute
