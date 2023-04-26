@@ -37,13 +37,6 @@ export default defineConfig(({ command, mode }) => {
         '@': pathResolve('./src')
       }
     },
-    css: {
-      preprocessorOptions: {
-        less: {
-          additionalData: `@import "@/assets/styles/var.less";`
-        }
-      }
-    },
     server: {
       host: true,
       port: VITE_PORT,
