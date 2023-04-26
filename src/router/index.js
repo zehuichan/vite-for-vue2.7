@@ -1,35 +1,28 @@
-import Vue, { effectScope, getCurrentInstance, reactive } from 'vue'
+import Vue from 'vue'
 import VueRouter from 'vue-router'
+
+const modulesRoutes = import.meta.glob('./modules/**/*.js', { eager: true })
+
+const modules = Object.keys(modulesRoutes).reduce((modules, modulePath) => {
+  const value = modulesRoutes[modulePath].default
+  modules.push(...value)
+  return modules
+}, [])
+
+console.log(modules)
 
 Vue.use(VueRouter)
 
-export const router = new VueRouter({
-  mode: 'hash',
-  routes: []
-})
+export const constantRoutes = [
+  ...modules
+]
 
-export function useRouter() {
-  const vm = getCurrentInstance()
-  if (!vm) throw new Error('must be called in setup')
-  return vm.proxy.$router
+export function createRouter(routes = constantRoutes) {
+  return new VueRouter({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: routes
+  })
 }
 
-let currentRoute
-
-export function useRoute() {
-  const vm = getCurrentInstance()
-  if (!vm) throw new Error('must be called in setup')
-
-  if (!currentRoute) {
-    const scope = effectScope(true)
-    scope.run(() => {
-      const { $router } = vm.proxy
-      currentRoute = reactive(Object.assign({}, $router.currentRoute))
-      $router.afterEach((to) => {
-        Object.assign(currentRoute, to)
-      })
-    })
-  }
-
-  return currentRoute
-}
+export const router = createRouter()

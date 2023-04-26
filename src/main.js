@@ -2,26 +2,28 @@ import Vue from 'vue'
 import App from './App.vue'
 
 // global css
-import './styles/index.less'
+import './assets/styles/index.less'
 
-import { setupVant } from './plugins/vant'
+import { setupVant } from './plugins/framework/vant'
 import { store } from './store'
 import { router } from './router'
 import { setupGuard } from './router/guard'
-import i18n, { setupI18n } from './lang'
 import { registerComponents } from './components'
 
-setupVant(Vue)
-registerComponents(Vue)
-setupGuard(router)
-setupI18n()
+function bootstrap() {
+  setupVant(Vue)
+  setupGuard(router)
+  registerComponents(Vue)
 
-Vue.config.productionTip = false
+  Vue.config.productionTip = false
+
+
+  new Vue({
+    router,
+    pinia: store,
+    render: (h) => h(App)
+  }).$mount('#app')
+}
+
+bootstrap()
 console.log(__APP_INFO__)
-
-new Vue({
-  router,
-  pinia: store,
-  i18n,
-  render: (h) => h(App)
-}).$mount('#app')

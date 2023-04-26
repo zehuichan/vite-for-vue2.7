@@ -40,7 +40,7 @@ export default defineConfig(({ command, mode }) => {
     css: {
       preprocessorOptions: {
         less: {
-          additionalData: `@import "@/styles/var.less";`
+          additionalData: `@import "@/assets/styles/var.less";`
         }
       }
     },
